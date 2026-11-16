@@ -4,43 +4,52 @@
     "title": "2025→2026 NOIP 广东名单：哪些学校的入选人数在上升？",
     "category": "数据观察",
     "template": "noip-analysis",
+    "readMinutes": 13,
     "summary": "对比 NOIP 2025 与 2026 广东名单，整理各学校入选人数变化、排名、柱状图、变化图和完整 CSV 数据。",
-    "createdAt": "2026-11-16T09:00:00+08:00",
+    "createdAt": "2026-11-16T01:00:00Z",
     "published": true,
-    "markdown": "<section class=\"analysis-snapshot\" aria-labelledby=\"snapshot-title\">\n  <div class=\"snapshot-heading\">\n    <p class=\"eyebrow\"><span>AT A GLANCE</span><span>核心数字</span></p>\n    <h2 id=\"snapshot-title\">先看总量，再看结构</h2>\n  </div>\n  <div class=\"stat-band\">\n    <div class=\"stat-item\"><span class=\"stat-value\">1,038</span><span class=\"stat-label\">2026 年名单人数</span><span class=\"stat-detail\">较 2025 年净增 91 人</span></div>\n    <div class=\"stat-item stat-item-accent\"><span class=\"stat-value\">+9.6%</span><span class=\"stat-label\">总人数同比增幅</span><span class=\"stat-detail\">947 → 1,038</span></div>\n    <div class=\"stat-item\"><span class=\"stat-value\">40.6%</span><span class=\"stat-label\">前十学校人数占比</span><span class=\"stat-detail\">421 / 1,038 人</span></div>\n  </div>\n  <p class=\"snapshot-note\">名单中出现的学校数量由 120 所增至 135 所；两年并集共 165 所。新增面孔变多，但头部集中度仍然明显。</p>\n</section>\n\n<p>这份分析只回答一个描述性问题：在公开名单里，各学校 2025 年和 2026 年各出现多少人，变化是多少。它不直接把人数解释成学校实力，也不把一次增减等同于训练质量升降。不同年份的推荐类别、年级结构和参赛资格都会影响名单。</p>\n\n<blockquote>最值得注意的不是总量增长，而是增量集中：少数学校吞下了大部分净增长，同时另一些传统强校的名单人数明显收窄。</blockquote>\n\n<section class=\"chart-panel\" aria-labelledby=\"top-schools-title\">\n  <div class=\"chart-heading\">\n    <div>\n      <p class=\"eyebrow\"><span>CHART 01</span><span>RANKING</span></p>\n      <h2 id=\"top-schools-title\">2026 年人数前十二学校</h2>\n    </div>\n    <div class=\"chart-legend\" aria-label=\"图例\"><span><i class=\"swatch swatch-2025\"></i>2025</span><span><i class=\"swatch swatch-2026\"></i>2026</span></div>\n  </div>\n  <div class=\"chart-scroll\" id=\"topSchoolsChart\" aria-live=\"polite\"></div>\n  <p class=\"chart-caption\">按 2026 年人数降序。每个短条代表一所学校一年的名单人数。</p>\n</section>\n\n<h2>头部学校：东华继续领先，实验中学升至第二</h2>\n<p>东莞市东华高级中学从 74 人增至 85 人，净增 11 人，继续排在首位。广东实验中学从 46 人增至 52 人，超过人数回落的佛山市南海区石门中学，升至第二。石门中学从 62 人降至 48 人，减少 14 人，是本次样本中绝对人数下降最多的学校。</p>\n<p>深圳中学从 31 人增至 41 人，进入前四；汕头市金山中学从 25 人增至 34 人，升至第六。前十名合计 421 人，占 2026 年名单的 40.6%，头部依旧集中，但内部次序发生了明显调整。</p>\n\n<section class=\"chart-panel\" aria-labelledby=\"change-chart-title\">\n  <div class=\"chart-heading\">\n    <div>\n      <p class=\"eyebrow\"><span>CHART 02</span><span>CHANGE</span></p>\n      <h2 id=\"change-chart-title\">人数变化最大的学校</h2>\n    </div>\n    <div class=\"chart-legend\" aria-label=\"图例\"><span><i class=\"swatch swatch-up\"></i>增加</span><span><i class=\"swatch swatch-down\"></i>减少</span></div>\n  </div>\n  <div class=\"chart-scroll\" id=\"changeChart\" aria-live=\"polite\"></div>\n  <p class=\"chart-caption\">分别选取净增和净减最多的八所学校。0 表示该校在对应年份名单中未出现。</p>\n</section>\n\n<h2>增长来自哪里</h2>\n<p>净增 11 人的学校有两所：东莞市东华高级中学和深圳北理莫斯科大学附属实验中学。后者从 8 人升至 19 人，增幅 137.5%，名次跃升更明显。深圳中学与深圳外国语学校各增加 10 人，汕头市金山中学、深圳市福田区红岭中学各增加 9 人。</p>\n<p>也有学校在低位快速扩张。中山市第一中学从 6 人增至 14 人，惠州市第一中学从 2 人增至 10 人，江门市第一中学和深圳大学附属中学都从 6 人、7 人增长到 13 人、14 人。增量不仅来自传统头部，也来自第二梯队的扩张。</p>\n\n<h2>回落不等于简单的“退步”</h2>\n<p>佛山市南海区石门中学减少 14 人，中山市华辰实验中学减少 8 人，华南师范大学附属中学减少 7 人。广州市铁一中学和深圳市龙岗区龙城高级中学各减少 6 人。这个结果值得继续追问，但不能单凭名单人数推断教学质量：推荐类别、当年年级结构、参赛门槛和同城其他学校的分流都可能改变人数。</p>\n<p>另外，45 所学校只在 2026 名单中出现，30 所学校只在 2025 名单中出现。部分变化可能来自校名调整或名单统计口径不同，因此本文把这些学校标记为“新出现”和“未出现”，而不是直接断言新设或退出。</p>\n\n<section class=\"ranking-section\" aria-labelledby=\"ranking-title\">\n  <div class=\"ranking-heading\">\n    <div>\n      <p class=\"eyebrow\"><span>FULL TABLE</span><span>SEARCH &amp; SORT</span></p>\n      <h2 id=\"ranking-title\">完整学校排名</h2>\n    </div>\n    <a class=\"button button-outline\" href=\"data/noip-school-counts.csv\" download>\n      下载 CSV\n      <svg aria-hidden=\"true\" viewBox=\"0 0 24 24\"><path d=\"M12 3v12M7 10l5 5 5-5M5 21h14\"></path></svg>\n    </a>\n  </div>\n\n  <div class=\"table-toolbar\">\n    <label class=\"search-field\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"7\"></circle><path d=\"m20 20-4-4\"></path></svg>\n      <span class=\"visually-hidden\">搜索学校</span>\n      <input id=\"schoolSearch\" type=\"search\" placeholder=\"搜索学校名称\" autocomplete=\"off\">\n    </label>\n    <label class=\"filter-field\">\n      <span>变化类型</span>\n      <select id=\"statusFilter\">\n        <option value=\"all\">全部</option>\n        <option value=\"up\">人数上升</option>\n        <option value=\"down\">人数下降</option>\n        <option value=\"same\">人数持平</option>\n        <option value=\"new\">2026 新出现</option>\n        <option value=\"left\">2026 未出现</option>\n      </select>\n    </label>\n    <p class=\"table-count\" id=\"tableCount\" aria-live=\"polite\">正在载入数据…</p>\n  </div>\n\n  <div class=\"table-scroll\">\n    <table class=\"data-table\" id=\"schoolRanking\">\n      <caption class=\"visually-hidden\">2025 与 2026 年各学校 NOIP 广东名单人数对比</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\"><button class=\"sort-button\" type=\"button\" data-sort=\"rank_2026\" data-type=\"number\">2026 排名 <span aria-hidden=\"true\">↑</span></button></th>\n          <th scope=\"col\"><button class=\"sort-button\" type=\"button\" data-sort=\"school\" data-type=\"text\">学校 <span aria-hidden=\"true\">↕</span></button></th>\n          <th scope=\"col\"><button class=\"sort-button\" type=\"button\" data-sort=\"count_2025\" data-type=\"number\">2025 <span aria-hidden=\"true\">↕</span></button></th>\n          <th scope=\"col\"><button class=\"sort-button\" type=\"button\" data-sort=\"count_2026\" data-type=\"number\">2026 <span aria-hidden=\"true\">↕</span></button></th>\n          <th scope=\"col\"><button class=\"sort-button\" type=\"button\" data-sort=\"change\" data-type=\"number\">变化 <span aria-hidden=\"true\">↕</span></button></th>\n          <th scope=\"col\"><button class=\"sort-button\" type=\"button\" data-sort=\"rank_delta\" data-type=\"number\">位次变化 <span aria-hidden=\"true\">↕</span></button></th>\n          <th scope=\"col\">状态</th>\n        </tr>\n      </thead>\n      <tbody id=\"rankingBody\">\n        <tr><td colspan=\"7\">正在载入数据…</td></tr>\n      </tbody>\n    </table>\n  </div>\n  <noscript><p>完整排名需要启用 JavaScript。你也可以直接下载表格中的 CSV 数据。</p></noscript>\n</section>\n\n<section class=\"method-note\" aria-labelledby=\"method-title\">\n  <p class=\"eyebrow\"><span>METHOD</span><span>口径与处理</span></p>\n  <h2 id=\"method-title\">数据是怎么得到的</h2>\n  <ol>\n    <li><strong>2025：</strong>读取 <code>NOIP2025.pdf</code> 的文字层，按“学校”列汇总 947 条名单记录。</li>\n    <li><strong>2026：</strong>对 28 页扫描名单按表格行和学校列裁切，使用中文 OCR 识别 1,038 条记录，并对页级行数进行核对。</li>\n    <li><strong>校名：</strong>以 2025 校名为主词典，修复拆字、误识别和明确的同校全称差异；只在身份清晰时合并别名。</li>\n    <li><strong>计数：</strong>每一名名单中的学生计 1 人次。表格中的 0 表示该校未出现在对应年份名单，不代表学校没有开展信息学活动。</li>\n  </ol>\n  <p class=\"method-caveat\">2025 与 2026 名单中的类别结构并不完全相同，部分学校名称也可能调整。因此，增减值适合用于发现样本内变化，不足以单独评价学校实力或官方名额。</p>\n</section>",
-    "readMinutes": 13
+    "markdown": "AT A GLANCE核心数字\n\n## 先看总量，再看结构\n\n1,0382026 年名单人数较 2025 年净增 91 人\n\n+9.6%总人数同比增幅947 → 1,038\n\n40.6%前十学校人数占比421 / 1,038 人\n\n名单中出现的学校数量由 120 所增至 135 所；两年并集共 165 所。新增面孔变多，但头部集中度仍然明显。\n\n这份分析只回答一个描述性问题：在公开名单里，各学校 2025 年和 2026 年各出现多少人，变化是多少。它不直接把人数解释成学校实力，也不把一次增减等同于训练质量升降。不同年份的推荐类别、年级结构和参赛资格都会影响名单。\n\n> 最值得注意的不是总量增长，而是增量集中：少数学校吞下了大部分净增长，同时另一些传统强校的名单人数明显收窄。\n\nCHART 01RANKING\n\n## 2026 年人数前十二学校\n\n20252026\n\n按 2026 年人数降序。每个短条代表一所学校一年的名单人数。\n\n## 头部学校：东华继续领先，实验中学升至第二\n\n东莞市东华高级中学从 74 人增至 85 人，净增 11 人，继续排在首位。广东实验中学从 46 人增至 52 人，超过人数回落的佛山市南海区石门中学，升至第二。石门中学从 62 人降至 48 人，减少 14 人，是本次样本中绝对人数下降最多的学校。\n\n深圳中学从 31 人增至 41 人，进入前四；汕头市金山中学从 25 人增至 34 人，升至第六。前十名合计 421 人，占 2026 年名单的 40.6%，头部依旧集中，但内部次序发生了明显调整。\n\nCHART 02CHANGE\n\n## 人数变化最大的学校\n\n增加减少\n\n分别选取净增和净减最多的八所学校。0 表示该校在对应年份名单中未出现。\n\n## 增长来自哪里\n\n净增 11 人的学校有两所：东莞市东华高级中学和深圳北理莫斯科大学附属实验中学。后者从 8 人升至 19 人，增幅 137.5%，名次跃升更明显。深圳中学与深圳外国语学校各增加 10 人，汕头市金山中学、深圳市福田区红岭中学各增加 9 人。\n\n也有学校在低位快速扩张。中山市第一中学从 6 人增至 14 人，惠州市第一中学从 2 人增至 10 人，江门市第一中学和深圳大学附属中学都从 6 人、7 人增长到 13 人、14 人。增量不仅来自传统头部，也来自第二梯队的扩张。\n\n## 回落不等于简单的“退步”\n\n佛山市南海区石门中学减少 14 人，中山市华辰实验中学减少 8 人，华南师范大学附属中学减少 7 人。广州市铁一中学和深圳市龙岗区龙城高级中学各减少 6 人。这个结果值得继续追问，但不能单凭名单人数推断教学质量：推荐类别、当年年级结构、参赛门槛和同城其他学校的分流都可能改变人数。\n\n另外，45 所学校只在 2026 名单中出现，30 所学校只在 2025 名单中出现。部分变化可能来自校名调整或名单统计口径不同，因此本文把这些学校标记为“新出现”和“未出现”，而不是直接断言新设或退出。\n\nFULL TABLESEARCH & SORT\n\n## 完整学校排名\n\n 下载 CSV\n\n搜索学校 变化类型 全部 人数上升 人数下降 人数持平 2026 新出现 2026 未出现\n\n正在载入数据…\n\n\n|  |  |  |  |  |  |  |\n| ------------------------------ | ---- | ------ | ------ | ---- | ------ | --- |\n| 2025 与 2026 年各学校 NOIP 广东名单人数对比 |  |  |  |  |  |  |\n| 2026 排名 ↑ | 学校 ↕ | 2025 ↕ | 2026 ↕ | 变化 ↕ | 位次变化 ↕ | 状态 |\n| 正在载入数据… |  |  |  |  |  |  |\n\n\nMETHOD口径与处理\n\n## 数据是怎么得到的\n\n1. **2025：**读取 `NOIP2025.pdf` 的文字层，按“学校”列汇总 947 条名单记录。\n2. **2026：**对 28 页扫描名单按表格行和学校列裁切，使用中文 OCR 识别 1,038 条记录，并对页级行数进行核对。\n3. **校名：**以 2025 校名为主词典，修复拆字、误识别和明确的同校全称差异；只在身份清晰时合并别名。\n4. **计数：**每一名名单中的学生计 1 人次。表格中的 0 表示该校未出现在对应年份名单，不代表学校没有开展信息学活动。\n\n2025 与 2026 名单中的类别结构并不完全相同，部分学校名称也可能调整。因此，增减值适合用于发现样本内变化，不足以单独评价学校实力或官方名额。"
   },
   {
     "id": "b5dc45ca-9aa7-4d91-9ee8-e45d12d1a15d",
     "title": "一场模拟赛之后，先检查哪三件事",
     "category": "训练方法",
     "template": "standard",
+    "readMinutes": 5,
     "summary": "把“发挥不好”拆成可以复查的证据：读题、实现和复盘顺序。",
-    "createdAt": "2026-11-08T10:00:00+08:00",
+    "createdAt": "2026-11-08T02:00:00Z",
     "published": true,
-    "markdown": "比赛结束后的第一反应通常是看分数，但分数只能说明结果。真正能改变下一场比赛的，是当时为什么读成了另一道题、为什么卡在那个实现细节，以及为什么没有及时换策略。\n\n## 一、读题时漏掉了哪个限制\n\n把题面重新读一遍，只标出数据范围、输出条件和特殊约定。如果第一次和第二次标出的关键词不同，问题就已经找到了：不是“不会”，而是信息没有完整进入模型。\n\n## 二、代码和脑中的方案是否一致\n\n对照伪代码与提交代码，检查边界、下标、初始化顺序和复杂度。很多失误不需要新的算法知识，只需要在提交前用一组小数据手算一遍。\n\n## 三、时间是否花在了最难判断的地方\n\n记录每次停顿时在做什么：推性质、写暴力、调边界，还是等待一个不会出现的灵感。下一次遇到同样信号时，就可以提前设定换题阈值。\n\n> 复盘不是把错误再经历一次，而是把它变成下一次可以执行的检查动作。",
-    "readMinutes": 5
+    "markdown": "比赛结束后的第一反应通常是看分数，但分数只能说明结果。真正能改变下一场比赛的，是当时为什么读成了另一道题、为什么卡在那个实现细节，以及为什么没有及时换策略。\n\n## 一、读题时漏掉了哪个限制\n\n把题面重新读一遍，只标出数据范围、输出条件和特殊约定。如果第一次和第二次标出的关键词不同，问题就已经找到了：不是“不会”，而是信息没有完整进入模型。\n\n## 二、代码和脑中的方案是否一致\n\n对照伪代码与提交代码，检查边界、下标、初始化顺序和复杂度。很多失误不需要新的算法知识，只需要在提交前用一组小数据手算一遍。\n\n## 三、时间是否花在了最难判断的地方\n\n记录每次停顿时在做什么：推性质、写暴力、调边界，还是等待一个不会出现的灵感。下一次遇到同样信号时，就可以提前设定换题阈值。\n\n> 复盘不是把错误再经历一次，而是把它变成下一次可以执行的检查动作。\n\n"
   },
   {
     "id": "f975200d-59e7-44d8-a105-77c70284b954",
     "title": "为什么我把错题写成一页实验记录",
     "category": "学习方法",
     "template": "standard",
+    "readMinutes": 4,
     "summary": "错题的价值不在答案本身，而在它能否暴露下一次仍然会犯的判断。",
-    "createdAt": "2026-10-29T09:00:00+08:00",
+    "createdAt": "2026-10-29T01:00:00Z",
     "published": true,
-    "markdown": "传统的错题本很容易变成答案抄写：题目、正解、一句“注意边界”。下一次遇到相似题，仍然可能在同一处停下来，因为真正缺席的是当时的选择过程。\n\n## 一页记录应该包含什么\n\n我会写下四块内容：最初判断、卡住的证据、错误原因、下次触发检查的信号。它们比完整题解短，却更接近一次可以复用的小实验。\n\n## 把“粗心”换成可观察动作\n\n“粗心”无法执行，“提交前用最小样例手算一次”可以执行。把模糊评价改写成动作，记录才有机会影响下一次比赛。\n\n## 定期回看，而不是只收藏\n\n每周只挑三页重读，并遮住结论重新判断。若仍然无法复现正确路径，说明记录里缺少关键条件，而不是自己“记性不好”。",
-    "readMinutes": 4
+    "markdown": "传统的错题本很容易变成答案抄写：题目、正解、一句“注意边界”。下一次遇到相似题，仍然可能在同一处停下来，因为真正缺席的是当时的选择过程。\n\n## 一页记录应该包含什么\n\n我会写下四块内容：最初判断、卡住的证据、错误原因、下次触发检查的信号。它们比完整题解短，却更接近一次可以复用的小实验。\n\n## 把“粗心”换成可观察动作\n\n“粗心”无法执行，“提交前用最小样例手算一次”可以执行。把模糊评价改写成动作，记录才有机会影响下一次比赛。\n\n## 定期回看，而不是只收藏\n\n每周只挑三页重读，并遮住结论重新判断。若仍然无法复现正确路径，说明记录里缺少关键条件，而不是自己“记性不好”。"
   },
   {
     "id": "4f15a2b3-8447-4f52-9809-8fe15fa9ca29",
     "title": "云端写作已启用",
     "category": "站点公告",
-    "summary": "文章已经接入跨设备管理：可以在电脑或手机上新增、编辑、删除文章并上传图片。",
-    "createdAt": "2026-11-16T14:20:00+08:00",
-    "published": true,
-    "markdown": "## 随时随地继续写作\n\n博客文章现在保存在 GitHub 仓库中。登录云端管理后，可以在不同电脑、平板或手机上继续编辑同一批文章。\n\n- 支持新增和删除文章\n- 支持 Markdown 编辑与渲染\n- 支持图片上传\n- 保存后自动发布到 GitHub Pages\n\n> 云端保存完成后，GitHub Pages 通常需要几十秒完成更新。",
+    "template": "standard",
     "readMinutes": 1,
-    "template": "standard"
+    "summary": "文章已经接入跨设备管理：可以在电脑或手机上新增、编辑、删除文章并上传图片。",
+    "createdAt": "2026-11-16T06:20:00Z",
+    "published": true,
+    "markdown": "## 随时随地继续写作\n\n博客文章现在保存在 GitHub 仓库中。登录云端管理后，可以在不同电脑、平板或手机上继续编辑同一批文章。\n\n- 支持新增和删除文章\n- 支持 Markdown 编辑与渲染\n- 支持图片上传\n- 保存后自动发布到 GitHub Pages\n\n> 云端保存完成后，GitHub Pages 通常需要几十秒完成更新。\n\n"
+  },
+  {
+    "id": "4e820ffa-82fc-47da-8fc7-ea9b369f9699",
+    "title": "跨设备功能测试 2026-11-16",
+    "category": "功能测试",
+    "summary": "用于验证 Pages CMS 新增、Markdown、图片上传和删除流程的临时文章。",
+    "createdAt": "2026-11-16T14:47:00Z",
+    "published": true,
+    "markdown": "## Markdown 渲染测试\n\n这是一篇通过 Pages CMS 新增的临时文章。\n\n- 支持跨设备新增\n- 支持跨设备删除\n- 支持 Markdown 渲染\n- 支持图片上传\n\n**粗体内容已经正常渲染。**\n\n> 测试完成后会删除这篇文章。"
   }
 ]
