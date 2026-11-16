@@ -6,7 +6,7 @@
   const REMOTE_POSTS_URL = "content/posts.json";
   const page = document.body.dataset.page;
   const root = document.getElementById("blogEditorRoot");
-  const state = { currentPost: null, pendingDelete: null, toastTimer: 0, posts: [], renderVersion: 0 };
+  const state = { currentPost: null, pendingDelete: null, toastTimer: 0, posts: [], renderVersion: 0, noipAnalysis: null };
   let remotePostsPromise = null;
 
   if (!root) return;
@@ -27,7 +27,7 @@
           </header>
           <div class="wechat-preview-scroll"><article class="wechat-preview" id="wechatPreview"></article></div>
           <footer class="dialog-footer">
-            <p class="dialog-note">图片使用本地嵌入数据</p>
+            <p class="dialog-note">图片与图表复制后可能需要在公众号后台重新上传</p>
             <div class="dialog-actions">
               <button class="button button-outline" type="button" data-download-wechat>下载 HTML</button>
               <button class="button button-primary" type="button" data-copy-wechat-dialog>复制到公众号</button>
@@ -642,6 +642,158 @@
     if (post) showWechatPreview(post);
   }
 
+  function hydrateNoipTemplate(root) {
+    if (!root || root.querySelector("#topSchoolsChart")) return;
+
+    const children = [...root.children];
+    const firstHeading = children.find((node) => node.tagName === "H2");
+    const findHeading = (text) => children.find((node) => node.tagName === "H2" && node.textContent.includes(text));
+    const findParagraph = (text) => children.find((node) => node.tagName === "P" && node.textContent.trim().startsWith(text));
+    const nextHeadingAfter = (heading) => {
+      let node = heading?.nextElementSibling || null;
+      while (node && node.tagName !== "H2") node = node.nextElementSibling;
+      return node;
+    };
+    const hideRangeUntil = (start, end) => {
+      let node = start;
+      while (node && node !== end) {
+        const next = node.nextElementSibling;
+        node.hidden = true;
+        node = next;
+      }
+    };
+
+    const snapshotMarkup = `
+      <section class="analysis-snapshot" aria-labelledby="snapshot-title">
+        <div class="snapshot-heading">
+          <p class="eyebrow"><span>AT A GLANCE</span><span>核心数字</span></p>
+          <h2 id="snapshot-title">先看总量，再看结构</h2>
+        </div>
+        <div class="stat-band">
+          <div class="stat-item"><span class="stat-value">1,038</span><span class="stat-label">2026 年名单人数</span><span class="stat-detail">较 2025 年净增 91 人</span></div>
+          <div class="stat-item stat-item-accent"><span class="stat-value">+9.6%</span><span class="stat-label">总人数同比增幅</span><span class="stat-detail">947 → 1,038</span></div>
+          <div class="stat-item"><span class="stat-value">40.6%</span><span class="stat-label">前十学校人数占比</span><span class="stat-detail">421 / 1,038 人</span></div>
+        </div>
+        <p class="snapshot-note">名单中出现的学校数量由 120 所增至 135 所；两年并集共 165 所。新增面孔变多，但头部集中度仍然明显。</p>
+      </section>`;
+
+    const topChartMarkup = `
+      <section class="chart-panel" aria-labelledby="top-schools-title">
+        <div class="chart-heading">
+          <div>
+            <p class="eyebrow"><span>CHART 01</span><span>RANKING</span></p>
+            <h2 id="top-schools-title">2026 年人数前十二学校</h2>
+          </div>
+          <div class="chart-legend" aria-label="图例"><span><i class="swatch swatch-2025"></i>2025</span><span><i class="swatch swatch-2026"></i>2026</span></div>
+        </div>
+        <div class="chart-scroll" id="topSchoolsChart" aria-live="polite"></div>
+        <p class="chart-caption">按 2026 年人数降序。每个短条代表一所学校一年的名单人数。</p>
+      </section>`;
+
+    const changeChartMarkup = `
+      <section class="chart-panel" aria-labelledby="change-chart-title">
+        <div class="chart-heading">
+          <div>
+            <p class="eyebrow"><span>CHART 02</span><span>CHANGE</span></p>
+            <h2 id="change-chart-title">人数变化最大的学校</h2>
+          </div>
+          <div class="chart-legend" aria-label="图例"><span><i class="swatch swatch-up"></i>增加</span><span><i class="swatch swatch-down"></i>减少</span></div>
+        </div>
+        <div class="chart-scroll" id="changeChart" aria-live="polite"></div>
+        <p class="chart-caption">分别选取净增和净减最多的八所学校。0 表示该校在对应年份名单中未出现。</p>
+      </section>`;
+
+    const rankingMarkup = `
+      <section class="ranking-section" aria-labelledby="ranking-title">
+        <div class="ranking-heading">
+          <div>
+            <p class="eyebrow"><span>FULL TABLE</span><span>SEARCH &amp; SORT</span></p>
+            <h2 id="ranking-title">完整学校排名</h2>
+          </div>
+          <a class="button button-outline" href="data/noip-school-counts.csv" download>
+            下载 CSV
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
+          </a>
+        </div>
+        <div class="table-toolbar">
+          <label class="search-field">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <span class="visually-hidden">搜索学校</span>
+            <input id="schoolSearch" type="search" placeholder="搜索学校名称" autocomplete="off">
+          </label>
+          <label class="filter-field">
+            <span>变化类型</span>
+            <select id="statusFilter">
+              <option value="all">全部</option>
+              <option value="up">人数上升</option>
+              <option value="down">人数下降</option>
+              <option value="same">人数持平</option>
+              <option value="new">2026 新出现</option>
+              <option value="left">2026 未出现</option>
+            </select>
+          </label>
+          <p class="table-count" id="tableCount" aria-live="polite">正在载入数据…</p>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="schoolRanking">
+            <caption class="visually-hidden">2025 与 2026 年各学校 NOIP 广东名单人数对比</caption>
+            <thead>
+              <tr>
+                <th scope="col"><button class="sort-button" type="button" data-sort="rank_2026" data-type="number">2026 排名 <span aria-hidden="true">↑</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" data-sort="school" data-type="text">学校 <span aria-hidden="true">↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" data-sort="count_2025" data-type="number">2025 <span aria-hidden="true">↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" data-sort="count_2026" data-type="number">2026 <span aria-hidden="true">↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" data-sort="change" data-type="number">变化 <span aria-hidden="true">↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" data-sort="rank_delta" data-type="number">位次变化 <span aria-hidden="true">↕</span></button></th>
+                <th scope="col">状态</th>
+              </tr>
+            </thead>
+            <tbody id="rankingBody">
+              <tr><td colspan="7">正在载入数据…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>`;
+
+    if (firstHeading) {
+      let node = root.firstElementChild;
+      while (node && node !== firstHeading) {
+        node.hidden = true;
+        node = node.nextElementSibling;
+      }
+      firstHeading.insertAdjacentHTML("beforebegin", snapshotMarkup);
+
+      let cursor = firstHeading;
+      while (cursor) {
+        const next = cursor.nextElementSibling;
+        cursor.hidden = true;
+        if (!next || (next.tagName === "P" && next.textContent.trim().startsWith("这份分析只回答"))) break;
+        cursor = next;
+      }
+    }
+
+    const topHeading = findHeading("2026 年人数前十二学校");
+    const topMarker = findParagraph("CHART 01") || topHeading;
+    if (topMarker) {
+      topMarker.insertAdjacentHTML("beforebegin", topChartMarkup);
+      hideRangeUntil(topMarker, nextHeadingAfter(topHeading));
+    }
+
+    const changeHeading = findHeading("人数变化最大的学校");
+    const changeMarker = findParagraph("CHART 02") || changeHeading;
+    if (changeMarker) {
+      changeMarker.insertAdjacentHTML("beforebegin", changeChartMarkup);
+      hideRangeUntil(changeMarker, nextHeadingAfter(changeHeading));
+    }
+
+    const rankingHeading = findHeading("完整学校排名");
+    const rankingMarker = findParagraph("FULL TABLE") || rankingHeading;
+    if (rankingMarker) {
+      rankingMarker.insertAdjacentHTML("beforebegin", rankingMarkup);
+      hideRangeUntil(rankingMarker, nextHeadingAfter(rankingHeading));
+    }
+  }
+
   async function initCustomPost() {
     const id = new URLSearchParams(window.location.search).get("id");
     const post = id ? await getPost(id) : null;
@@ -668,14 +820,15 @@
     const body = document.getElementById("dynamicBody");
     body.innerHTML = renderMarkdown(post.markdown);
     if (post.template === "noip-analysis") {
-      window.BlogAnalysis?.initNoipAnalysis({
+      hydrateNoipTemplate(body);
+      state.noipAnalysis = window.BlogAnalysis?.initNoipAnalysis({
         csvPath: "data/noip-school-counts.csv",
         root: body,
-      });
+      }) || null;
     }
 
-    document.querySelector("[data-wechat-preview]")?.addEventListener("click", () => showWechatPreview(post));
-    document.querySelector("[data-copy-wechat]")?.addEventListener("click", () => copyWechat(post));
+    document.querySelector("[data-wechat-preview]")?.addEventListener("click", () => void showWechatPreview(post));
+    document.querySelector("[data-copy-wechat]")?.addEventListener("click", () => void copyWechat(post));
     const deleteButton = document.querySelector("[data-delete-current-post]");
     const manageLink = document.querySelector("[data-manage-current-post]");
     if (post.source === "cloud") {
@@ -692,19 +845,40 @@
     }
   }
 
-  function showWechatPreview(post) {
+  async function showWechatPreview(post) {
     if (!post) return;
+    await waitForNoipAnalysis(post);
     state.currentPost = post;
     const preview = document.getElementById("wechatPreview");
     const heading = document.getElementById("wechatDialogTitle");
-    if (preview) preview.innerHTML = buildWechatContent(post);
+    if (preview) preview.innerHTML = buildWechatContent(post, getRenderedArticleBody(post));
     if (heading) heading.textContent = post.title;
     openDialog("wechatDialog");
   }
 
-  function buildWechatContent(post) {
-    const source = document.createElement("div");
-    source.innerHTML = renderMarkdown(post.markdown);
+  function getRenderedArticleBody(post) {
+    const body = document.getElementById("dynamicBody");
+    return post.template === "noip-analysis" && state.currentPost?.id === post.id ? body : null;
+  }
+
+  async function waitForNoipAnalysis(post) {
+    if (post.template !== "noip-analysis" || state.currentPost?.id !== post.id) return;
+    await state.noipAnalysis?.ready;
+  }
+
+  function buildWechatContent(post, renderedBody = null) {
+    const source = renderedBody ? renderedBody.cloneNode(true) : document.createElement("div");
+    if (renderedBody) {
+      source.querySelectorAll("[hidden]").forEach((node) => node.remove());
+      source.querySelectorAll(".table-toolbar, noscript").forEach((node) => node.remove());
+      if (post.template === "noip-analysis") {
+        const rankingBody = source.querySelector("#rankingBody");
+        const fullTableHtml = state.noipAnalysis?.getFullTableHtml?.();
+        if (rankingBody && fullTableHtml) rankingBody.innerHTML = fullTableHtml;
+      }
+    } else {
+      source.innerHTML = renderMarkdown(post.markdown);
+    }
     styleWechatNodes(source);
 
     const wrapper = document.createElement("section");
@@ -745,6 +919,9 @@
     container.querySelectorAll("li").forEach((node) => node.setAttribute("style", "margin:6px 0;padding-left:2px;"));
     container.querySelectorAll("a").forEach((node) => node.setAttribute("style", "color:#2859a6;text-decoration:underline;text-underline-offset:2px;"));
     container.querySelectorAll("img").forEach((node) => node.setAttribute("style", "display:block;max-width:100%;height:auto;margin:26px auto;border-radius:4px;"));
+    container.querySelectorAll("svg").forEach((node) => node.setAttribute("style", "display:block;width:100%;max-width:100%;height:auto;margin:24px auto;overflow:visible;"));
+    container.querySelectorAll(".chart-scroll, .table-scroll").forEach((node) => node.setAttribute("style", "width:100%;overflow-x:auto;overscroll-behavior-inline:contain;"));
+    container.querySelectorAll(".analysis-snapshot, .chart-panel, .ranking-section").forEach((node) => node.setAttribute("style", "margin:30px 0;padding:20px;border:1px solid #dce5df;border-radius:4px;background:#ffffff;"));
     container.querySelectorAll("hr").forEach((node) => node.setAttribute("style", "margin:34px 0;border:0;border-top:1px solid #dce5df;"));
     container.querySelectorAll("pre").forEach((node) => node.setAttribute("style", "margin:22px 0;padding:16px;overflow-x:auto;color:#eaf2ed;background:#17231f;border-radius:4px;font-size:13px;line-height:1.75;white-space:pre-wrap;"));
     container.querySelectorAll("code").forEach((node) => {
@@ -760,7 +937,8 @@
       showToast("还没有可复制的文章");
       return;
     }
-    const html = buildWechatContent(post);
+    await waitForNoipAnalysis(post);
+    const html = buildWechatContent(post, getRenderedArticleBody(post));
     const plain = `${post.title}\n\n${post.summary || ""}\n\n${markdownToText(post.markdown)}`.trim();
     try {
       if (navigator.clipboard?.write && window.ClipboardItem) {
@@ -773,8 +951,8 @@
       } else {
         fallbackCopyHtml(html);
       }
-      const hasImages = /<img\b/i.test(html);
-      showToast(hasImages ? "已复制；公众号若未显示图片，请在后台重新上传" : "已复制到公众号");
+      const hasEmbeddedVisuals = /<(?:img|svg)\b/i.test(html);
+      showToast(hasEmbeddedVisuals ? "已复制；如公众号未显示图片或图表，请重新上传" : "已复制到公众号");
     } catch {
       try {
         fallbackCopyHtml(html);
@@ -802,9 +980,10 @@
     if (!copied) throw new Error("Copy failed");
   }
 
-  function downloadWechat(post) {
+  async function downloadWechat(post) {
     if (!post) return;
-    const body = buildWechatContent(post);
+    await waitForNoipAnalysis(post);
+    const body = buildWechatContent(post, getRenderedArticleBody(post));
     const documentHtml = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeText(post.title)}</title></head><body style="margin:0;padding:24px;background:#fff;">${body}</body></html>`;
     const url = URL.createObjectURL(new Blob([documentHtml], { type: "text/html;charset=utf-8" }));
     const link = document.createElement("a");

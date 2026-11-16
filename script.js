@@ -57,7 +57,7 @@
   }
 
   function initNoipAnalysis({ csvPath, root = document } = {}) {
-    if (!csvPath) return;
+    if (!csvPath) return null;
 
     const chartTop = root.querySelector("#topSchoolsChart");
     const chartChange = root.querySelector("#changeChart");
@@ -66,7 +66,16 @@
     const statusFilter = root.querySelector("#statusFilter");
     const tableCount = root.querySelector("#tableCount");
     const rankingTable = root.querySelector("#schoolRanking");
-    if (!chartTop || !chartChange || !tableBody || !rankingTable) return;
+    if (!chartTop || !chartChange || !tableBody || !rankingTable) return null;
+
+    let resolveReady;
+    const ready = new Promise((resolve) => {
+      resolveReady = resolve;
+    });
+    const controller = {
+      ready,
+      getFullTableHtml: () => "",
+    };
 
   fetch(csvPath)
     .then((response) => {
@@ -84,14 +93,18 @@
         rank_delta: Number(row.rank_delta),
         status: row.status,
       }));
-      initAnalysis(rows);
+      controller.getFullTableHtml = initAnalysis(rows);
+      resolveReady(controller);
     })
     .catch((error) => {
       tableBody.innerHTML = `<tr><td colspan="7">数据载入失败：${escapeHtml(error.message)}</td></tr>`;
       if (tableCount) tableCount.textContent = "数据载入失败";
       chartTop.innerHTML = '<p class="chart-error">图表数据暂时无法载入。</p>';
       chartChange.innerHTML = '<p class="chart-error">图表数据暂时无法载入。</p>';
+      resolveReady(controller);
     });
+
+    return controller;
 
   function normalizeCsvValue(value) {
     return value.endsWith(String.fromCharCode(13)) ? value.slice(0, -1) : value;
@@ -156,6 +169,31 @@
       direction: "asc",
     };
 
+    function createTableRows(dataRows) {
+      const fragment = document.createDocumentFragment();
+      for (const row of dataRows) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="number-cell">${row.count_2026 > 0 ? row.rank_2026 : "—"}</td>
+          <th scope="row" class="school-cell">${escapeHtml(row.school)}</th>
+          <td class="number-cell">${row.count_2025}</td>
+          <td class="number-cell">${row.count_2026}</td>
+          <td class="number-cell ${changeClass(row.change)}">${formatSigned(row.change)}</td>
+          <td class="number-cell ${row.status === "new" || row.status === "left" ? "muted-cell" : changeClass(row.rank_delta)}">${formatRankMove(row)}</td>
+          <td><span class="status-badge status-${row.status}">${statusLabel(row.status)}</span></td>
+        `;
+        fragment.appendChild(tr);
+      }
+
+      if (!dataRows.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="7" class="empty-table">没有符合当前条件的学校。</td>';
+        fragment.appendChild(tr);
+      }
+
+      return fragment;
+    }
+
     function renderTable() {
       const query = state.query.trim().toLocaleLowerCase("zh-CN");
       const filtered = rows
@@ -171,28 +209,7 @@
           return state.direction === "asc" ? comparison : -comparison;
         });
 
-      const fragment = document.createDocumentFragment();
-      for (const row of filtered) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="number-cell">${row.count_2026 > 0 ? row.rank_2026 : "—"}</td>
-          <th scope="row" class="school-cell">${escapeHtml(row.school)}</th>
-          <td class="number-cell">${row.count_2025}</td>
-          <td class="number-cell">${row.count_2026}</td>
-          <td class="number-cell ${changeClass(row.change)}">${formatSigned(row.change)}</td>
-          <td class="number-cell ${row.status === "new" || row.status === "left" ? "muted-cell" : changeClass(row.rank_delta)}">${formatRankMove(row)}</td>
-          <td><span class="status-badge status-${row.status}">${statusLabel(row.status)}</span></td>
-        `;
-        fragment.appendChild(tr);
-      }
-
-      if (!filtered.length) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = '<td colspan="7" class="empty-table">没有符合当前条件的学校。</td>';
-        fragment.appendChild(tr);
-      }
-
-      tableBody.replaceChildren(fragment);
+      tableBody.replaceChildren(createTableRows(filtered));
       if (tableCount) tableCount.textContent = `显示 ${filtered.length} / ${rows.length} 所学校`;
     }
 
@@ -236,6 +253,19 @@
 
     updateSortHeader(rankingTable.querySelector('[data-sort="rank_2026"]'));
     renderTable();
+
+    return () => {
+      const fullRows = [...rows].sort((a, b) => {
+        return (
+          a.rank_2026 - b.rank_2026 ||
+          b.count_2026 - a.count_2026 ||
+          a.school.localeCompare(b.school, "zh-CN")
+        );
+      });
+      const exportBody = document.createElement("tbody");
+      exportBody.append(createTableRows(fullRows));
+      return exportBody.innerHTML;
+    };
   }
 
   function renderTopSchools(rows) {
