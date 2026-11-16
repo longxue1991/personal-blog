@@ -1927,6 +1927,27 @@ body:has(dialog[open]) {
   opacity: 1;
 }
 
+.post-row.is-cloud .post-kicker {
+  color: var(--blue);
+}
+
+.post-manage {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.post-manage:hover {
+  color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 9%, transparent);
+  border-color: color-mix(in srgb, var(--blue) 34%, var(--line));
+}
+
+.post-row.is-cloud .post-number,
+.post-row.is-local .post-number {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+
 dialog {
   padding: 0;
   color: var(--ink);

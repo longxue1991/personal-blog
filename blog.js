@@ -2,15 +2,18 @@
   const STORAGE_KEY = "codex-blog-custom-posts-v1";
   const IMAGE_MAX_BYTES = 8 * 1024 * 1024;
   const IMAGE_TARGET_BYTES = 1100 * 1024;
+  const CLOUD_MANAGER_URL = "https://app.pagescms.org/";
+  const REMOTE_POSTS_URL = "content/posts.json";
   const page = document.body.dataset.page;
   const root = document.getElementById("blogEditorRoot");
-  const state = { currentPost: null, pendingDelete: null, toastTimer: 0 };
+  const state = { currentPost: null, pendingDelete: null, toastTimer: 0, posts: [], renderVersion: 0 };
+  let remotePostsPromise = null;
 
   if (!root) return;
 
   initShell();
-  if (page === "home") initHome();
-  if (page === "custom-post") initCustomPost();
+  if (page === "home") void initHome();
+  if (page === "custom-post") void initCustomPost();
 
   function initShell() {
     root.innerHTML = `
@@ -55,26 +58,62 @@
     document.querySelector("[data-download-wechat]")?.addEventListener("click", () => downloadWechat(state.currentPost));
   }
 
-  function getPosts() {
+  function getLocalPosts() {
     try {
       const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
       if (!Array.isArray(value)) return [];
-      return value.filter(isValidPost).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+      return value
+        .filter(isValidPost)
+        .map((post) => ({ ...post, source: "local" }))
+        .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
     } catch {
       return [];
     }
   }
 
-  function savePosts(posts) {
+  function saveLocalPosts(posts) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+  }
+
+  async function getCloudPosts(force = false) {
+    if (!remotePostsPromise || force) {
+      remotePostsPromise = fetch(`${REMOTE_POSTS_URL}?sync=${Date.now()}`, { cache: "no-store" })
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then((data) => {
+          const posts = Array.isArray(data) ? data : data?.posts;
+          if (!Array.isArray(posts)) throw new Error("云端文章格式不正确");
+          return posts
+            .filter((post) => post?.published !== false && isValidPost(post))
+            .map((post) => ({ ...post, source: "cloud" }));
+        })
+        .catch((error) => {
+          remotePostsPromise = null;
+          console.warn("Cloud posts unavailable", error);
+          showToast("云端文章暂时无法读取，已显示本地草稿");
+          return [];
+        });
+    }
+    return remotePostsPromise;
+  }
+
+  async function getPosts(force = false) {
+    const [cloudPosts, localPosts] = await Promise.all([getCloudPosts(force), Promise.resolve(getLocalPosts())]);
+    const merged = new Map();
+    cloudPosts.forEach((post) => merged.set(post.id, post));
+    localPosts.forEach((post) => merged.set(post.id, post));
+    return [...merged.values()].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
   }
 
   function isValidPost(post) {
     return Boolean(post && typeof post.id === "string" && typeof post.title === "string" && typeof post.markdown === "string");
   }
 
-  function getPost(id) {
-    return getPosts().find((post) => post.id === id) || null;
+  async function getPost(id) {
+    const posts = await getPosts();
+    return posts.find((post) => post.id === id) || null;
   }
 
   function createId() {
@@ -141,11 +180,11 @@
   }
 
   function requestDelete(postId, onDeleted) {
-    const post = getPost(postId);
+    const post = getLocalPosts().find((item) => item.id === postId);
     if (!post) return;
     state.pendingDelete = { postId, onDeleted };
     const copy = document.getElementById("deletePostCopy");
-    if (copy) copy.textContent = `“${post.title}”将从当前浏览器的文章列表中删除。`;
+    if (copy) copy.textContent = `“${post.title}”是一篇本地草稿，删除后只影响当前浏览器。`;
     openDialog("deletePostDialog");
   }
 
@@ -154,26 +193,30 @@
     state.pendingDelete = null;
     closeDialog("deletePostDialog");
     if (!pending) return;
-    const posts = getPosts().filter((post) => post.id !== pending.postId);
-    savePosts(posts);
+    const posts = getLocalPosts().filter((post) => post.id !== pending.postId);
+    saveLocalPosts(posts);
     pending.onDeleted?.();
-    showToast("文章已删除");
+    showToast("本地草稿已删除");
   }
 
-  function initHome() {
+  async function initHome() {
     const mount = document.getElementById("postManagerMount");
     if (mount) {
       mount.innerHTML = `
-        <p class="section-note">从一张表、一行代码，或一次没有想明白的失误开始。</p>
+        <p class="section-note">云端文章跨设备同步；本地草稿仅保存在当前浏览器。</p>
         <div class="post-manager-actions" aria-label="文章管理">
-          <button class="button button-primary button-compact" type="button" data-open-editor>
+          <a class="button button-primary button-compact" href="${CLOUD_MANAGER_URL}" target="_blank" rel="noopener noreferrer" data-cloud-manager>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
-            新建文章
+            云端写作
+          </a>
+          <button class="button button-outline button-compact" type="button" data-open-editor>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4"></path></svg>
+            本地草稿
           </button>
-          <button class="icon-button" type="button" data-export-posts aria-label="导出文章备份" title="导出文章备份">
+          <button class="icon-button" type="button" data-export-posts aria-label="导出本地草稿" title="导出本地草稿">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
           </button>
-          <button class="icon-button" type="button" data-import-posts aria-label="导入文章备份" title="导入文章备份">
+          <button class="icon-button" type="button" data-import-posts aria-label="导入本地草稿" title="导入本地草稿">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"></path></svg>
           </button>
           <input class="visually-hidden" type="file" accept="application/json,.json" data-import-file>
@@ -183,7 +226,7 @@
 
     injectEditorDialog();
     bindEditor();
-    renderCustomPosts();
+    await renderCustomPosts();
 
     mount?.querySelector("[data-open-editor]")?.addEventListener("click", openEditor);
     mount?.querySelector("[data-export-posts]")?.addEventListener("click", exportPosts);
@@ -193,33 +236,47 @@
     document.querySelector(".post-list")?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-delete-post]");
       if (!button) return;
-      requestDelete(button.dataset.deletePost, renderCustomPosts);
+      requestDelete(button.dataset.deletePost, () => void renderCustomPosts(true));
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) void renderCustomPosts(true);
     });
   }
 
-  function renderCustomPosts() {
+  async function renderCustomPosts(force = false) {
     const list = document.querySelector(".post-list");
     if (!list) return;
+    const renderVersion = ++state.renderVersion;
+    const posts = await getPosts(force);
+    if (renderVersion !== state.renderVersion) return;
     list.querySelectorAll(".post-row.is-custom").forEach((row) => row.remove());
     const fragment = document.createDocumentFragment();
+    state.posts = posts;
 
-    getPosts().forEach((post) => {
+    posts.forEach((post) => {
+      const isCloud = post.source === "cloud";
+      const rowAction = isCloud
+        ? `<a class="post-delete post-manage" href="${CLOUD_MANAGER_URL}" target="_blank" rel="noopener noreferrer" aria-label="在云端管理中编辑文章" title="云端编辑">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4"></path></svg>
+          </a>`
+        : `<button class="post-delete" type="button" aria-label="删除本地草稿" title="删除本地草稿" data-delete-post="${escapeAttribute(post.id)}">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"></path></svg>
+          </button>`;
       const article = document.createElement("article");
-      article.className = "post-row post-row-custom is-custom";
+      article.className = `post-row post-row-custom is-custom ${isCloud ? "is-cloud" : "is-local"}`;
       article.dataset.customPostId = post.id;
       article.innerHTML = `
-        <span class="post-number">NEW</span>
+        <span class="post-number">${isCloud ? "CLOUD" : "LOCAL"}</span>
         <div class="post-main">
-          <p class="post-kicker">${escapeText(post.category || "随笔").toUpperCase()} / LOCAL</p>
+          <p class="post-kicker">${escapeText(post.category || "随笔").toUpperCase()} / ${isCloud ? "CLOUD" : "LOCAL"}</p>
           <h3><a></a></h3>
           <p></p>
         </div>
         <div class="post-meta"><span></span><span></span></div>
         <div class="post-row-actions">
           <a class="post-arrow" aria-label="阅读文章"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"></path></svg></a>
-          <button class="post-delete" type="button" aria-label="删除文章" title="删除文章" data-delete-post="${escapeAttribute(post.id)}">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"></path></svg>
-          </button>
+          ${rowAction}
         </div>
       `;
       const href = `post.html?id=${encodeURIComponent(post.id)}`;
@@ -243,9 +300,9 @@
   }
 
   function exportPosts() {
-    const posts = getPosts();
+    const posts = getLocalPosts();
     if (!posts.length) {
-      showToast("还没有可导出的本地文章");
+      showToast("还没有可导出的本地草稿");
       return;
     }
     const payload = JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), posts }, null, 2);
@@ -255,7 +312,7 @@
     link.download = `codex-blog-backup-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    showToast(`已导出 ${posts.length} 篇文章`);
+    showToast(`已导出 ${posts.length} 篇本地草稿`);
   }
 
   async function importPosts(event) {
@@ -267,11 +324,11 @@
       const data = JSON.parse(await file.text());
       const incoming = (Array.isArray(data) ? data : data.posts)?.filter(isValidPost);
       if (!Array.isArray(incoming)) throw new Error("备份文件格式不正确");
-      const merged = new Map(getPosts().map((post) => [post.id, post]));
+      const merged = new Map(getLocalPosts().map((post) => [post.id, post]));
       incoming.forEach((post) => merged.set(post.id, post));
-      savePosts([...merged.values()]);
-      renderCustomPosts();
-      showToast(`已导入 ${incoming.length} 篇文章`);
+      saveLocalPosts([...merged.values()]);
+      await renderCustomPosts(true);
+      showToast(`已导入 ${incoming.length} 篇本地草稿`);
     } catch (error) {
       showToast(error instanceof SyntaxError ? "备份文件无法解析" : error.message);
     }
@@ -290,7 +347,7 @@
       <dialog class="editor-dialog" id="postEditorDialog" aria-labelledby="postEditorTitle">
         <form class="editor-form" id="postEditorForm">
           <header class="dialog-header editor-dialog-header">
-            <div><p class="eyebrow"><span>WRITING DESK</span><span>MARKDOWN</span></p><h2 id="postEditorTitle">新建文章</h2></div>
+            <div><p class="eyebrow"><span>WRITING DESK</span><span>LOCAL DRAFT</span></p><h2 id="postEditorTitle">新建本地草稿</h2></div>
             <button class="icon-button" type="button" data-close-editor aria-label="关闭编辑器" title="关闭">
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg>
             </button>
@@ -346,7 +403,7 @@
             </div>
             <div class="dialog-actions">
               <button class="button button-outline" type="button" data-close-editor>取消</button>
-              <button class="button button-primary" type="submit">保存文章</button>
+              <button class="button button-primary" type="submit">保存本地草稿</button>
             </div>
           </footer>
         </form>
@@ -550,13 +607,13 @@
     };
 
     try {
-      savePosts([post, ...getPosts()]);
+      saveLocalPosts([post, ...getLocalPosts()]);
       renderCustomPosts();
       closeEditor();
-      showToast("文章已保存到当前浏览器");
+      showToast("已保存为本地草稿");
       document.getElementById("writing")?.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (error) {
-      if (status) status.textContent = error?.name === "QuotaExceededError" ? "浏览器存储空间不足，请减少图片或导出备份后清理文章" : "文章保存失败，请稍后重试";
+      if (status) status.textContent = error?.name === "QuotaExceededError" ? "浏览器存储空间不足，请减少图片或导出草稿后清理" : "本地草稿保存失败，请稍后重试";
     }
   }
 
@@ -585,9 +642,9 @@
     if (post) showWechatPreview(post);
   }
 
-  function initCustomPost() {
+  async function initCustomPost() {
     const id = new URLSearchParams(window.location.search).get("id");
-    const post = id ? getPost(id) : null;
+    const post = id ? await getPost(id) : null;
     const article = document.getElementById("dynamicArticle");
     const missing = document.getElementById("dynamicArticleMissing");
     if (!post || !article || !missing) {
@@ -607,14 +664,25 @@
     document.getElementById("dynamicTitle").textContent = post.title;
     document.getElementById("dynamicSummary").textContent = post.summary || createExcerpt(post.markdown);
     document.getElementById("dynamicReadTime").textContent = `约 ${post.readMinutes || countReadMinutes(post.markdown)} 分钟`;
-    document.getElementById("dynamicCategoryMeta").textContent = post.category || "随笔";
+    document.getElementById("dynamicCategoryMeta").textContent = `${post.category || "随笔"} · ${post.source === "cloud" ? "云端" : "本地草稿"}`;
     document.getElementById("dynamicBody").innerHTML = renderMarkdown(post.markdown);
 
     document.querySelector("[data-wechat-preview]")?.addEventListener("click", () => showWechatPreview(post));
     document.querySelector("[data-copy-wechat]")?.addEventListener("click", () => copyWechat(post));
-    document.querySelector("[data-delete-current-post]")?.addEventListener("click", () => {
-      requestDelete(post.id, () => { window.location.href = "index.html#writing"; });
-    });
+    const deleteButton = document.querySelector("[data-delete-current-post]");
+    const manageLink = document.querySelector("[data-manage-current-post]");
+    if (post.source === "cloud") {
+      if (deleteButton) deleteButton.hidden = true;
+      if (manageLink) {
+        manageLink.hidden = false;
+        manageLink.href = CLOUD_MANAGER_URL;
+      }
+    } else {
+      if (manageLink) manageLink.hidden = true;
+      deleteButton?.addEventListener("click", () => {
+        requestDelete(post.id, () => { window.location.href = "index.html#writing"; });
+      });
+    }
   }
 
   function showWechatPreview(post) {
