@@ -50,6 +50,6 @@
     "summary": "用于验证 Pages CMS 新增、Markdown、图片上传和删除流程的临时文章。",
     "createdAt": "2026-11-16T14:47:00Z",
     "published": true,
-    "markdown": "## Markdown 渲染测试\n\n这是一篇通过 Pages CMS 新增的临时文章。\n\n- 支持跨设备新增\n- 支持跨设备删除\n- 支持 Markdown 渲染\n- 支持图片上传\n\n**粗体内容已经正常渲染。**\n\n> 测试完成后会删除这篇文章。"
+    "markdown": "## Markdown 渲染测试\n\n这是一篇通过 Pages CMS 新增的临时文章。\n\n- 支持跨设备新增\n- 支持跨设备删除\n- 支持 Markdown 渲染\n- 支持图片上传\n\n**粗体内容已经正常渲染。**\n\n![Pages CMS 图片上传测试](https://longxue1991.github.io/personal-blog/assets/uploads/mwiwoc9g-pm7uwn6g.png)\n\n> 测试完成后会删除这篇文章。"
   }
 ]
