@@ -28,6 +28,20 @@ content:
         label: 栏目
         type: string
         default: 随笔
+      - name: template
+        label: 页面模板
+        type: select
+        hidden: true
+        options:
+          values:
+            - name: standard
+              label: 普通文章
+            - name: noip-analysis
+              label: NOIP 名单分析
+      - name: readMinutes
+        label: 阅读分钟数
+        type: number
+        hidden: true
       - name: summary
         label: 摘要
         type: text

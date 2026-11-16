@@ -56,17 +56,17 @@
     revealTargets.forEach((element) => element.classList.add("is-visible"));
   }
 
-  const csvPath = document.body.dataset.csv;
-  if (!csvPath) return;
+  function initNoipAnalysis({ csvPath, root = document } = {}) {
+    if (!csvPath) return;
 
-  const chartTop = document.getElementById("topSchoolsChart");
-  const chartChange = document.getElementById("changeChart");
-  const tableBody = document.getElementById("rankingBody");
-  const searchInput = document.getElementById("schoolSearch");
-  const statusFilter = document.getElementById("statusFilter");
-  const tableCount = document.getElementById("tableCount");
-  const rankingTable = document.getElementById("schoolRanking");
-  if (!chartTop || !chartChange || !tableBody || !rankingTable) return;
+    const chartTop = root.querySelector("#topSchoolsChart");
+    const chartChange = root.querySelector("#changeChart");
+    const tableBody = root.querySelector("#rankingBody");
+    const searchInput = root.querySelector("#schoolSearch");
+    const statusFilter = root.querySelector("#statusFilter");
+    const tableCount = root.querySelector("#tableCount");
+    const rankingTable = root.querySelector("#schoolRanking");
+    if (!chartTop || !chartChange || !tableBody || !rankingTable) return;
 
   fetch(csvPath)
     .then((response) => {
@@ -369,4 +369,10 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
   }
+  }
+
+  window.BlogAnalysis = { initNoipAnalysis };
+
+  const legacyCsvPath = document.body.dataset.csv;
+  if (legacyCsvPath) initNoipAnalysis({ csvPath: legacyCsvPath });
 })();

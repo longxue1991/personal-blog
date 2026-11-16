@@ -665,7 +665,14 @@
     document.getElementById("dynamicSummary").textContent = post.summary || createExcerpt(post.markdown);
     document.getElementById("dynamicReadTime").textContent = `约 ${post.readMinutes || countReadMinutes(post.markdown)} 分钟`;
     document.getElementById("dynamicCategoryMeta").textContent = `${post.category || "随笔"} · ${post.source === "cloud" ? "云端" : "本地草稿"}`;
-    document.getElementById("dynamicBody").innerHTML = renderMarkdown(post.markdown);
+    const body = document.getElementById("dynamicBody");
+    body.innerHTML = renderMarkdown(post.markdown);
+    if (post.template === "noip-analysis") {
+      window.BlogAnalysis?.initNoipAnalysis({
+        csvPath: "data/noip-school-counts.csv",
+        root: body,
+      });
+    }
 
     document.querySelector("[data-wechat-preview]")?.addEventListener("click", () => showWechatPreview(post));
     document.querySelector("[data-copy-wechat]")?.addEventListener("click", () => copyWechat(post));
