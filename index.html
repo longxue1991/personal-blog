@@ -9,7 +9,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="home">
   <a class="skip-link" href="#main">跳到正文</a>
   <header class="site-shell site-header">
     <a class="wordmark" href="index.html" aria-label="代码工作台首页">
@@ -65,7 +65,7 @@
           <p class="eyebrow"><span>WRITING DESK</span><span>SELECTED</span></p>
           <h2>最近写下的</h2>
         </div>
-        <p class="section-note">从一张表、一行代码，或一次没有想明白的失误开始。</p>
+        <div class="section-heading-side" id="postManagerMount"></div>
       </div>
 
       <div class="post-list">
@@ -134,6 +134,10 @@
     <p>Built with plain HTML &amp; GitHub Pages</p>
     <a href="about.html">关于本站 ↗</a>
   </footer>
+  <div id="blogEditorRoot"></div>
+  <script src="assets/vendor/marked.umd.js"></script>
+  <script src="assets/vendor/purify.min.js"></script>
+  <script src="blog.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
