@@ -42,14 +42,5 @@
     "createdAt": "2026-11-16T06:20:00Z",
     "published": true,
     "markdown": "## 随时随地继续写作\n\n博客文章现在保存在 GitHub 仓库中。登录云端管理后，可以在不同电脑、平板或手机上继续编辑同一批文章。\n\n- 支持新增和删除文章\n- 支持 Markdown 编辑与渲染\n- 支持图片上传\n- 保存后自动发布到 GitHub Pages\n\n> 云端保存完成后，GitHub Pages 通常需要几十秒完成更新。\n\n"
-  },
-  {
-    "id": "4e820ffa-82fc-47da-8fc7-ea9b369f9699",
-    "title": "跨设备功能测试 2026-11-16",
-    "category": "功能测试",
-    "summary": "用于验证 Pages CMS 新增、Markdown、图片上传和删除流程的临时文章。",
-    "createdAt": "2026-11-16T14:47:00Z",
-    "published": true,
-    "markdown": "## Markdown 渲染测试\n\n这是一篇通过 Pages CMS 新增的临时文章。\n\n- 支持跨设备新增\n- 支持跨设备删除\n- 支持 Markdown 渲染\n- 支持图片上传\n\n**粗体内容已经正常渲染。**\n\n![Pages CMS 图片上传测试](https://longxue1991.github.io/personal-blog/assets/uploads/mwiwoc9g-pm7uwn6g.png)\n\n> 测试完成后会删除这篇文章。"
   }
 ]
