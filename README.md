@@ -12,7 +12,7 @@ python -m http.server 8000
 
 ## 发布
 
-仓库推送到 GitHub 的 `main` 分支后，在仓库 `Settings → Pages` 中将 Source 设为 **GitHub Actions**。工作流会发布站点，不需要额外构建命令。
+仓库推送到 GitHub 的 `main` 分支后，在仓库 `Settings → Pages` 中将 Source 设为 **Deploy from a branch**，分支选择 `main`，目录选择 `/ (root)`。站点是纯静态页面，不需要额外构建命令。
 
 ## 数据口径
 
