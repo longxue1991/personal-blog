@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="基于 NOIP 2025 与 2026 广东名单，比较各学校入选人数变化，并给出排名、柱状图和变化图。">
+  <meta name="theme-color" content="#f3f6f1">
+  <title>2025→2026 NOIP 广东名单：学校人数变化分析｜代码工作台</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body data-csv="../data/noip-school-counts.csv">
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-shell site-header">
+    <a class="wordmark" href="../index.html" aria-label="代码工作台首页">
+      <span class="wordmark-mark" aria-hidden="true">曹</span>
+      <span><strong>代码工作台</strong><small>NOTES / DATA / PRACTICE</small></span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="../index.html">首页</a>
+      <a class="is-current" href="../index.html#writing" aria-current="page">文章</a>
+      <a href="../about.html">关于</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false" title="切换配色">
+        <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+        <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main class="site-shell article-main article-main-wide" id="main">
+    <a class="back-link" href="../index.html#writing">← 返回文章列表</a>
+    <article>
+      <header class="article-header analysis-header">
+        <p class="eyebrow"><span>DATA NOTE / NOIP</span><span>2026.11.16</span></p>
+        <h1>2025→2026 NOIP 广东名单：哪些学校的入选人数在上升？</h1>
+        <p class="article-deck">把两份名单按学校重新计数后，总人数从 947 增至 1,038，净增 91 人。增量并没有平均落在头部学校：有人继续拉开差距，也有人出现明显回落。</p>
+        <div class="article-meta"><span>约 13 分钟</span><span>数据观察</span><span>曹雪龙</span><span>样本：广东名单</span></div>
+      </header>
+
+      <div class="article-body">
+        <section class="analysis-snapshot" aria-labelledby="snapshot-title">
+          <div class="snapshot-heading">
+            <p class="eyebrow"><span>AT A GLANCE</span><span>核心数字</span></p>
+            <h2 id="snapshot-title">先看总量，再看结构</h2>
+          </div>
+          <div class="stat-band">
+            <div class="stat-item"><span class="stat-value">1,038</span><span class="stat-label">2026 年名单人数</span><span class="stat-detail">较 2025 年净增 91 人</span></div>
+            <div class="stat-item stat-item-accent"><span class="stat-value">+9.6%</span><span class="stat-label">总人数同比增幅</span><span class="stat-detail">947 → 1,038</span></div>
+            <div class="stat-item"><span class="stat-value">40.6%</span><span class="stat-label">前十学校人数占比</span><span class="stat-detail">421 / 1,038 人</span></div>
+          </div>
+          <p class="snapshot-note">名单中出现的学校数量由 120 所增至 135 所；两年并集共 165 所。新增面孔变多，但头部集中度仍然明显。</p>
+        </section>
+
+        <p>这份分析只回答一个描述性问题：在公开名单里，各学校 2025 年和 2026 年各出现多少人，变化是多少。它不直接把人数解释成学校实力，也不把一次增减等同于训练质量升降。不同年份的推荐类别、年级结构和参赛资格都会影响名单。</p>
+
+        <blockquote>最值得注意的不是总量增长，而是增量集中：少数学校吞下了大部分净增长，同时另一些传统强校的名单人数明显收窄。</blockquote>
+
+        <section class="chart-panel" aria-labelledby="top-schools-title">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow"><span>CHART 01</span><span>RANKING</span></p>
+              <h2 id="top-schools-title">2026 年人数前十二学校</h2>
+            </div>
+            <div class="chart-legend" aria-label="图例"><span><i class="swatch swatch-2025"></i>2025</span><span><i class="swatch swatch-2026"></i>2026</span></div>
+          </div>
+          <div class="chart-scroll" id="topSchoolsChart" aria-live="polite"></div>
+          <p class="chart-caption">按 2026 年人数降序。每个短条代表一所学校一年的名单人数。</p>
+        </section>
+
+        <h2>头部学校：东华继续领先，实验中学升至第二</h2>
+        <p>东莞市东华高级中学从 74 人增至 85 人，净增 11 人，继续排在首位。广东实验中学从 46 人增至 52 人，超过人数回落的佛山市南海区石门中学，升至第二。石门中学从 62 人降至 48 人，减少 14 人，是本次样本中绝对人数下降最多的学校。</p>
+        <p>深圳中学从 31 人增至 41 人，进入前四；汕头市金山中学从 25 人增至 34 人，升至第六。前十名合计 421 人，占 2026 年名单的 40.6%，头部依旧集中，但内部次序发生了明显调整。</p>
+
+        <section class="chart-panel" aria-labelledby="change-chart-title">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow"><span>CHART 02</span><span>CHANGE</span></p>
+              <h2 id="change-chart-title">人数变化最大的学校</h2>
+            </div>
+            <div class="chart-legend" aria-label="图例"><span><i class="swatch swatch-up"></i>增加</span><span><i class="swatch swatch-down"></i>减少</span></div>
+          </div>
+          <div class="chart-scroll" id="changeChart" aria-live="polite"></div>
+          <p class="chart-caption">分别选取净增和净减最多的八所学校。0 表示该校在对应年份名单中未出现。</p>
+        </section>
+
+        <h2>增长来自哪里</h2>
+        <p>净增 11 人的学校有两所：东莞市东华高级中学和深圳北理莫斯科大学附属实验中学。后者从 8 人升至 19 人，增幅 137.5%，名次跃升更明显。深圳中学与深圳外国语学校各增加 10 人，汕头市金山中学、深圳市福田区红岭中学各增加 9 人。</p>
+        <p>也有学校在低位快速扩张。中山市第一中学从 6 人增至 14 人，惠州市第一中学从 2 人增至 10 人，江门市第一中学和深圳大学附属中学都从 6 人、7 人增长到 13 人、14 人。增量不仅来自传统头部，也来自第二梯队的扩张。</p>
+
+        <h2>回落不等于简单的“退步”</h2>
+        <p>佛山市南海区石门中学减少 14 人，中山市华辰实验中学减少 8 人，华南师范大学附属中学减少 7 人。广州市铁一中学和深圳市龙岗区龙城高级中学各减少 6 人。这个结果值得继续追问，但不能单凭名单人数推断教学质量：推荐类别、当年年级结构、参赛门槛和同城其他学校的分流都可能改变人数。</p>
+        <p>另外，45 所学校只在 2026 名单中出现，30 所学校只在 2025 名单中出现。部分变化可能来自校名调整或名单统计口径不同，因此本文把这些学校标记为“新出现”和“未出现”，而不是直接断言新设或退出。</p>
+
+        <section class="ranking-section" aria-labelledby="ranking-title">
+          <div class="ranking-heading">
+            <div>
+              <p class="eyebrow"><span>FULL TABLE</span><span>SEARCH &amp; SORT</span></p>
+              <h2 id="ranking-title">完整学校排名</h2>
+            </div>
+            <a class="button button-outline" href="../data/noip-school-counts.csv" download>
+              下载 CSV
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
+            </a>
+          </div>
+
+          <div class="table-toolbar">
+            <label class="search-field">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+              <span class="visually-hidden">搜索学校</span>
+              <input id="schoolSearch" type="search" placeholder="搜索学校名称" autocomplete="off">
+            </label>
+            <label class="filter-field">
+              <span>变化类型</span>
+              <select id="statusFilter">
+                <option value="all">全部</option>
+                <option value="up">人数上升</option>
+                <option value="down">人数下降</option>
+                <option value="same">人数持平</option>
+                <option value="new">2026 新出现</option>
+                <option value="left">2026 未出现</option>
+              </select>
+            </label>
+            <p class="table-count" id="tableCount" aria-live="polite">正在载入数据…</p>
+          </div>
+
+          <div class="table-scroll">
+            <table class="data-table" id="schoolRanking">
+              <caption class="visually-hidden">2025 与 2026 年各学校 NOIP 广东名单人数对比</caption>
+              <thead>
+                <tr>
+                  <th scope="col"><button class="sort-button" type="button" data-sort="rank_2026" data-type="number">2026 排名 <span aria-hidden="true">↑</span></button></th>
+                  <th scope="col"><button class="sort-button" type="button" data-sort="school" data-type="text">学校 <span aria-hidden="true">↕</span></button></th>
+                  <th scope="col"><button class="sort-button" type="button" data-sort="count_2025" data-type="number">2025 <span aria-hidden="true">↕</span></button></th>
+                  <th scope="col"><button class="sort-button" type="button" data-sort="count_2026" data-type="number">2026 <span aria-hidden="true">↕</span></button></th>
+                  <th scope="col"><button class="sort-button" type="button" data-sort="change" data-type="number">变化 <span aria-hidden="true">↕</span></button></th>
+                  <th scope="col"><button class="sort-button" type="button" data-sort="rank_delta" data-type="number">位次变化 <span aria-hidden="true">↕</span></button></th>
+                  <th scope="col">状态</th>
+                </tr>
+              </thead>
+              <tbody id="rankingBody">
+                <tr><td colspan="7">正在载入数据…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <noscript><p>完整排名需要启用 JavaScript。你也可以直接下载表格中的 CSV 数据。</p></noscript>
+        </section>
+
+        <section class="method-note" aria-labelledby="method-title">
+          <p class="eyebrow"><span>METHOD</span><span>口径与处理</span></p>
+          <h2 id="method-title">数据是怎么得到的</h2>
+          <ol>
+            <li><strong>2025：</strong>读取 <code>NOIP2025.pdf</code> 的文字层，按“学校”列汇总 947 条名单记录。</li>
+            <li><strong>2026：</strong>对 28 页扫描名单按表格行和学校列裁切，使用中文 OCR 识别 1,038 条记录，并对页级行数进行核对。</li>
+            <li><strong>校名：</strong>以 2025 校名为主词典，修复拆字、误识别和明确的同校全称差异；只在身份清晰时合并别名。</li>
+            <li><strong>计数：</strong>每一名名单中的学生计 1 人次。表格中的 0 表示该校未出现在对应年份名单，不代表学校没有开展信息学活动。</li>
+          </ol>
+          <p class="method-caveat">2025 与 2026 名单中的类别结构并不完全相同，部分学校名称也可能调整。因此，增减值适合用于发现样本内变化，不足以单独评价学校实力或官方名额。</p>
+        </section>
+      </div>
+
+      <footer class="article-footer">
+        <p>最后更新：2026.11.16 · 数据文件：<a href="../data/noip-school-counts.csv">noip-school-counts.csv</a></p>
+        <a href="../index.html#writing">返回文章列表 ↗</a>
+      </footer>
+    </article>
+  </main>
+
+  <script src="../script.js"></script>
+</body>
+</html>

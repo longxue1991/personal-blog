@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="关于代码工作台与这个个人博客。">
+  <meta name="theme-color" content="#f3f6f1">
+  <title>关于｜代码工作台</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-shell site-header">
+    <a class="wordmark" href="index.html" aria-label="代码工作台首页">
+      <span class="wordmark-mark" aria-hidden="true">曹</span>
+      <span><strong>代码工作台</strong><small>NOTES / DATA / PRACTICE</small></span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="index.html#writing">文章</a>
+      <a class="is-current" href="about.html" aria-current="page">关于</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false" title="切换配色">
+        <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+        <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main class="site-shell about-main" id="main">
+    <section class="about-intro">
+      <div>
+        <p class="eyebrow"><span>ABOUT THIS DESK</span><span>曹雪龙</span></p>
+        <h1>一张留给<br>长期问题的工作台。</h1>
+      </div>
+      <p class="about-lead">代码工作台是一个个人札记站。它保存算法训练中的判断、竞赛数据里的变化，以及那些值得反复修改的想法。</p>
+    </section>
+
+    <section class="about-grid" aria-label="关于内容">
+      <article class="about-card about-card-profile">
+        <p class="card-label">PROFILE / 01</p>
+        <h2>学习、训练，<br>也把过程留下来。</h2>
+        <p>关注信息学竞赛、算法实现与数据表达。写作时会尽量区分事实、口径和推断，让后来复查的人可以顺着线索走回去。</p>
+        <p>这个站点使用纯 HTML、CSS 和 JavaScript 构建，由 GitHub Pages 发布，没有后台，也没有追踪脚本。</p>
+        <a class="text-link" href="https://github.com/" data-github-profile>GitHub 主页 <span aria-hidden="true">↗</span></a>
+      </article>
+
+      <article class="about-card">
+        <p class="card-label">INDEX / 02</p>
+        <h2>常写三类内容</h2>
+        <ol class="topic-list">
+          <li><span>01</span>算法与实现</li>
+          <li><span>02</span>比赛数据观察</li>
+          <li><span>03</span>训练方法与复盘</li>
+        </ol>
+      </article>
+
+      <article class="about-card about-card-wide">
+        <p class="card-label">PRINCIPLES / 03</p>
+        <div class="principle-row">
+          <p><strong>先记录来源</strong>数据文章保留名单口径、处理步骤和可下载的汇总表。</p>
+          <p><strong>再解释变化</strong>把描述和判断分开写，不用单一指标替代完整背景。</p>
+          <p><strong>保持可修订</strong>文章不是结论终点，发现错误时会更新，并说明修订理由。</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-shell site-footer">
+    <p>© 2026 代码工作台</p>
+    <p>Built with plain HTML &amp; GitHub Pages</p>
+    <a href="index.html">返回首页 ↗</a>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
